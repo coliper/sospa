@@ -1,14 +1,37 @@
 console.log('*** VUELIN ***');
 
+var session = {
+  global: {},
+  page: {}
+}
+
+session.global = {
+  customer: null
+}
+
+function loadPage(pageName, resolve, reject) {
+  var url = "/" + pageName;
+  var body = session.global;
+  var reqCfg = {};
+  axios.post(url, body, reqCfg)
+  .then(function (response) {
+    console.log(JSON.stringify(response));
+    var viewChange = response.data;
+    var component = {};
+    component.name = pageName;
+    component.template = viewChange.newPageTemplate; 
+    resolve(component);
+  })
+  .catch(function (error) {
+    console.log(JSON.stringify(error));
+    reject(error);
+  });
+}
 
 // 1. Define route components.
-const WelcomePage = { 
-    template: `
-      <div>
-        <h4>WelcomePage</h4>
-        <button class="btn btn-primary">Next</button>
-      </div>
-    ` 
+
+const loadWelcomePageComponent = function (resolve, reject) {
+  loadPage("WelcomePage", resolve, reject);
 }
 
 
@@ -25,7 +48,7 @@ const ErrorPage = { template: '<h4>Oops, something went wrong!</h4>' }
 // We'll talk about nested routes later.
 const routes = [
     { path: '/', redirect: '/welcome' },
-    { path: '/welcome', component: WelcomePage },
+    { path: '/welcome', component: loadWelcomePageComponent },
     { path: '/product', component: ProductPage },
     { path: '/summary', component: SummaryPage },
     { path: '/error', component: ErrorPage }
