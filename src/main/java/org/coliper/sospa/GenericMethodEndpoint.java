@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import io.javalin.http.Context;
 
 class GenericMethodEndpoint extends Endpoint {
-    private final VuelinApi targetObject;
+    private final SospaApi targetObject;
     private final Method targetMethod;
 
     private static String createMethodPathExtension(Method method) {
@@ -12,7 +12,7 @@ class GenericMethodEndpoint extends Endpoint {
     }
 
     GenericMethodEndpoint(String rootPath, EndpointNamespace namespace,
-            VuelinApi targetObject, Method targetMethod) {
+            SospaApi targetObject, Method targetMethod) {
         super(rootPath, namespace, createMethodPathExtension(targetMethod));
         this.targetObject = targetObject;
         this.targetMethod = targetMethod;

@@ -27,7 +27,7 @@ public class ApiMethodMatcher implements Predicate<Method> {
 
     private boolean isVuelinPageApiMethod(Method method) {
         try {
-            VuelinPage.class.getMethod(method.getName(), method.getParameterTypes());
+            SospaPage.class.getMethod(method.getName(), method.getParameterTypes());
             return true;
         } catch (NoSuchMethodException e) {
             return false;

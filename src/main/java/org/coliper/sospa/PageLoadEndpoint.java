@@ -6,11 +6,11 @@ import io.javalin.http.Context;
 class PageLoadEndpoint<G, P, S> extends Endpoint {
     private static final String EMPTY_PATH_EXTENSION = "";
 
-    private final Vuelin<G> vuelinInstance;
-    private final VuelinPage<G, P, S> page;
+    private final Sospa<G> vuelinInstance;
+    private final SospaPage<G, P, S> page;
 
-    public PageLoadEndpoint(String rootPath, VuelinPage<G, P, S> page,
-            Vuelin<G> vuelinInstance) {
+    public PageLoadEndpoint(String rootPath, SospaPage<G, P, S> page,
+            Sospa<G> vuelinInstance) {
         super(rootPath, page.getPageName(), EMPTY_PATH_EXTENSION);
         Objects.requireNonNull(page, "page");
         Objects.requireNonNull(vuelinInstance, "vuelinInstance");

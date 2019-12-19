@@ -1,10 +1,10 @@
 package org.coliper.sospa.sample.page;
 
 import org.coliper.sospa.PageSpecificData;
-import org.coliper.sospa.VuelinPage;
+import org.coliper.sospa.SospaPage;
 import org.coliper.sospa.sample.GlobalData;
 
-public class ProductPage implements VuelinPage<GlobalData, ProductPage.ClientSideData, Object> {
+public class ProductPage implements SospaPage<GlobalData, ProductPage.ClientSideData, Object> {
 
     public static class ClientSideData {
 

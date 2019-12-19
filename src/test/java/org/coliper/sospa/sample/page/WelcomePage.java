@@ -1,10 +1,10 @@
 package org.coliper.sospa.sample.page;
 
 import org.coliper.sospa.PageSpecificData;
-import org.coliper.sospa.VuelinPage;
+import org.coliper.sospa.SospaPage;
 import org.coliper.sospa.sample.GlobalData;
 
-public class WelcomePage implements VuelinPage<GlobalData, WelcomePage.ClientSideData, Object> {
+public class WelcomePage implements SospaPage<GlobalData, WelcomePage.ClientSideData, Object> {
 
 	public static class ClientSideData {
 		// required to avoid serialization error

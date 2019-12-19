@@ -1,5 +1,5 @@
 package org.coliper.sospa;
 
-public interface VuelinApi {
+public interface SospaApi {
 
 }
