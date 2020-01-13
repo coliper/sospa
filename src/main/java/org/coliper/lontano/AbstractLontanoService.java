@@ -28,11 +28,25 @@ public abstract class AbstractLontanoService<T extends AbstractLontanoService<?>
         return (T) this;
     }
 
-    public T addInterface(RemoteInterfaceName interfaceName, Object object) {
+    public T addInterface(RemoteInterfaceName interfaceName, Object object, Class<?> excludedSuperclass) {
         requireNonNull(interfaceName, "interfaceName");
         requireNonNull(object, "object");
         this.interfaceMap.put(interfaceName,
-                new RemoteInterface(interfaceName, object, this::deserializeFromJson));
+                new RemoteInterface(interfaceName, object, excludedSuperclass, this::deserializeFromJson));
+        return self();
+    }
+
+    public T addInterface(Object object, Class<?> excludedSuperclass) {
+        return this.addInterface(
+                this.createInterfaceNameFromObjectClass(requireNonNull(object, "object")), object, excludedSuperclass);
+    }
+
+    public T addInterface(RemoteInterfaceName interfaceName, Object object) {
+        requireNonNull(interfaceName, "interfaceName");
+        requireNonNull(object, "object");
+        final Class<?> excludedSuperclass = null;
+		this.interfaceMap.put(interfaceName,
+                new RemoteInterface(interfaceName, object, excludedSuperclass, this::deserializeFromJson));
         return self();
     }
 

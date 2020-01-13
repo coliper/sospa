@@ -33,7 +33,7 @@ public class Sospa<T> {
 	}
 
 	public Sospa(Class<T> globalViewDataType) {
-		this(globalViewDataType, FunctionUtil.createDefaultConstructorSupplier(globalViewDataType), javalin);
+		this(globalViewDataType, FunctionUtil.createDefaultConstructorSupplier(globalViewDataType));
 	}
 
 	public Sospa<T> addPage(SospaPage<T, ?, ?> page) {

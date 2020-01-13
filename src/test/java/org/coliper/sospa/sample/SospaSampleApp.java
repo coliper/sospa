@@ -19,7 +19,7 @@ public class SospaSampleApp {
 			config.addStaticFiles("src/test/resources/static-web", Location.EXTERNAL).enableDevLogging();
 
 		});
-		new Sospa<GlobalData>(GlobalData.class, javalin).addPages(createPageList());
+		new Sospa<GlobalData>(GlobalData.class).addPages(createPageList()).registerWithJavalin(javalin);
 		javalin.start();
 	}
 

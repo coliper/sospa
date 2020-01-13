@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
+
+import javax.annotation.Nullable;
 
 class RemoteInterface {
     private static List<Method> OBJECT_CLASS_METHODS =
@@ -22,14 +25,20 @@ class RemoteInterface {
     private final BiFunction<String, Class<?>, Object> jsonDeserializer;
 
     private static Map<RemoteOperationName, RemoteOperation> createOperationMap(
-            Object targetObject) {
+            Object targetObject, @Nullable Class<?> excludedSupertype) {
         final Map<RemoteOperationName, RemoteOperation> map = new HashMap<>();
+        final List<Method> excludedMethods;
+        if (excludedSupertype != null) {
+        	excludedMethods = Arrays.asList(excludedSupertype.getMethods());
+        } else {
+        	excludedMethods = OBJECT_CLASS_METHODS;
+        }
         Method[] methods = targetObject.getClass().getMethods();
         for (Method method : methods) {
             if (Modifier.isStatic(method.getModifiers())) {
                 continue; // skip static methods
             }
-            if (isObjectClassMethod(method)) {
+            if (excludedMethods.contains(method)) {
                 continue; // skip methods of class Object
             }
             map.put(new RemoteOperationName(method.getName()),
@@ -38,14 +47,10 @@ class RemoteInterface {
         return Collections.unmodifiableMap(map);
     }
 
-    private static boolean isObjectClassMethod(Method method) {
-        return OBJECT_CLASS_METHODS.contains(method);
-    }
-
-    RemoteInterface(RemoteInterfaceName name, Object targetObject,
+    RemoteInterface(RemoteInterfaceName name, Object targetObject, @Nullable Class<?> excludedSuperclass,
             BiFunction<String, Class<?>, Object> jsonDeserializer) {
         this.name = requireNonNull(name, "name");
-        this.operationMap = createOperationMap(requireNonNull(targetObject, "targetObject"));
+        this.operationMap = createOperationMap(requireNonNull(targetObject, "targetObject"), excludedSuperclass);
         this.jsonDeserializer = requireNonNull(jsonDeserializer, "jsonDeserializer");
     }
 
