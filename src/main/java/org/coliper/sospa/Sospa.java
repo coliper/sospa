@@ -19,20 +19,20 @@ public class Sospa<T> {
 	private final String rootPath = DEFALUT_ROOT_PATH;
 	private final Class<T> globalViewDataType;
 	private final Supplier<T> globalViewObjectSupplier;
-	private final AbstractLontanoService<?> lontano;
+	private final JavalinLontanoService lontano;
 	// move both to builder as not needed later?
 	private List<SospaPage<T, ?, ?>> pageList = new ArrayList<>();
 	private List<SospaCommonApi> apiList = new ArrayList<>();
 	private ApiMethodMatcher apiMethodMatcher = new ApiMethodMatcher();
 	private ServersideRenderingEngine renderingEngine = new ThymeleafRenderingEngine();
 
-	private Sospa(Class<T> globalViewDataType, Supplier<T> globalViewObjectSupplier, Javalin javalin) {
+	private Sospa(Class<T> globalViewDataType, Supplier<T> globalViewObjectSupplier) {
 		this.globalViewDataType = globalViewDataType;
 		this.globalViewObjectSupplier = globalViewObjectSupplier;
 		this.lontano  = new JavalinLontanoService();
 	}
 
-	public Sospa(Class<T> globalViewDataType, Javalin javalin) {
+	public Sospa(Class<T> globalViewDataType) {
 		this(globalViewDataType, FunctionUtil.createDefaultConstructorSupplier(globalViewDataType), javalin);
 	}
 
@@ -50,7 +50,11 @@ public class Sospa<T> {
 			this.addPage(vuelinPage);
 		}
 		return this;
-	}
+    }
+    
+    public void registerWithJavalin(Javalin javalin) {
+        this.lontano.registerWithJavalin(javalin);
+    }
 
 	private void registerEndpoints() {
 		for (SospaPage<T, ?, ?> page : this.pageList) {
