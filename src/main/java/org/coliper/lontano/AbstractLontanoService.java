@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 import com.google.common.base.Preconditions;
 
-public abstract class AbstractLontanoService<T> {
+public abstract class AbstractLontanoService<T extends AbstractLontanoService<?>> {
     private Map<RemoteInterfaceName, RemoteInterface> interfaceMap = new HashMap<>();
     private Function<Object, Object> returnValueInterceptor = Function.identity();
 

@@ -33,3 +33,10 @@ repositories {
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
 }
+
+task runSampleApp(type: JavaExec) {
+  dependsOn testClasses
+  classpath = sourceSets.test.runtimeClasspath
+
+  main = 'org.coliper.sospa.sample.SospaSampleApp'
+}
