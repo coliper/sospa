@@ -2,13 +2,22 @@ package org.coliper.lontano;
 
 import static java.util.Objects.requireNonNull;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.google.common.base.Preconditions;
 
 public abstract class AbstractLontanoService<T extends AbstractLontanoService<?>> {
+    private static final Predicate<Method> DEFAULT_METHOD_FILTER = new Predicate<Method>() {
+        @Override
+        public boolean test(Method method) {
+            return method.getDeclaringClass() != Object.class;
+        }
+    };
+
     private Map<RemoteInterfaceName, RemoteInterface> interfaceMap = new HashMap<>();
     private Function<Object, Object> returnValueInterceptor = Function.identity();
 
@@ -28,26 +37,26 @@ public abstract class AbstractLontanoService<T extends AbstractLontanoService<?>
         return (T) this;
     }
 
-    public T addInterface(RemoteInterfaceName interfaceName, Object object, Class<?> excludedSuperclass) {
+    public T addInterface(RemoteInterfaceName interfaceName, Object object,
+            Predicate<Method> methodFilter) {
         requireNonNull(interfaceName, "interfaceName");
         requireNonNull(object, "object");
-        this.interfaceMap.put(interfaceName,
-                new RemoteInterface(interfaceName, object, excludedSuperclass, this::deserializeFromJson));
+        requireNonNull(methodFilter, "methodFilter");
+        this.interfaceMap.put(interfaceName, new RemoteInterface(interfaceName, object,
+                methodFilter, this::deserializeFromJson));
         return self();
     }
 
-    public T addInterface(Object object, Class<?> excludedSuperclass) {
+    public T addInterface(Object object, Predicate<Method> methodFilter) {
         return this.addInterface(
-                this.createInterfaceNameFromObjectClass(requireNonNull(object, "object")), object, excludedSuperclass);
+                this.createInterfaceNameFromObjectClass(requireNonNull(object, "object")), object,
+                methodFilter);
     }
 
     public T addInterface(RemoteInterfaceName interfaceName, Object object) {
         requireNonNull(interfaceName, "interfaceName");
         requireNonNull(object, "object");
-        final Class<?> excludedSuperclass = null;
-		this.interfaceMap.put(interfaceName,
-                new RemoteInterface(interfaceName, object, excludedSuperclass, this::deserializeFromJson));
-        return self();
+        return this.addInterface(interfaceName, object, DEFAULT_METHOD_FILTER);
     }
 
     public T addInterface(Object object) {
