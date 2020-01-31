@@ -37,11 +37,11 @@ public class JavalinLontanoService extends AbstractLontanoService<JavalinLontano
         return this;
     }
 
-    public void registerWithJavalin(Javalin javalin) {
-        this.registerWithJavalin(javalin, DEFAULT_ROOT_PATH);
+    public JavalinLontanoService registerWithJavalin(Javalin javalin) {
+        return this.registerWithJavalin(javalin, DEFAULT_ROOT_PATH);
     }
 
-    public void registerWithJavalin(Javalin javalin, String rootPath) {
+    public JavalinLontanoService registerWithJavalin(Javalin javalin, String rootPath) {
         requireNonNull(javalin, "javalin");
         requireNonNull(rootPath, "rootPath");
         final String operationCallPath = rootPath + PATH_PARAMETER_MARKER + PATH_PARAMETER_INTERFACE
@@ -49,6 +49,7 @@ public class JavalinLontanoService extends AbstractLontanoService<JavalinLontano
         javalin.post(operationCallPath, this::handleOperationCall);
         final String wrapperPath = rootPath + this.wrapperPath;
         javalin.get(wrapperPath, this::handleWrapperCall);
+        return this;
     }
 
     public void handleOperationCall(Context ctx) throws Exception {

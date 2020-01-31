@@ -4,7 +4,7 @@ import org.coliper.sospa.PageSpecificData;
 import org.coliper.sospa.SospaPage;
 import org.coliper.sospa.sample.GlobalData;
 
-public class ProductPage implements SospaPage<GlobalData, ProductPage.ClientSideData, Object> {
+public class ProductPage extends SospaPage<GlobalData, ProductPage.ClientSideData, Object> {
 
     public static class ClientSideData {
 
@@ -14,7 +14,8 @@ public class ProductPage implements SospaPage<GlobalData, ProductPage.ClientSide
 
     }
 
-    public ProductPage() {}
+    public ProductPage() {
+    }
 
     @Override
     public PageSpecificData<ProductPage.ClientSideData> createPageSpecificData(

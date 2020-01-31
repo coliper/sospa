@@ -1,5 +1,8 @@
 package org.coliper.sospa;
 
+import static java.util.Objects.requireNonNull;
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -7,85 +10,66 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.coliper.lontano.AbstractLontanoService;
-import org.coliper.lontano.impl.JavalinLontanoService;
 
 import com.google.common.base.Preconditions;
 
-import io.javalin.Javalin;
-
 public class Sospa<T> {
-	private static final String DEFALUT_ROOT_PATH = "";
+    private static final String DEFALUT_ROOT_PATH = "";
 
-	private final String rootPath = DEFALUT_ROOT_PATH;
-	private final Class<T> globalViewDataType;
-	private final Supplier<T> globalViewObjectSupplier;
-	private final JavalinLontanoService lontano;
-	// move both to builder as not needed later?
-	private List<SospaPage<T, ?, ?>> pageList = new ArrayList<>();
-	private List<SospaCommonApi> apiList = new ArrayList<>();
-	private ApiMethodMatcher apiMethodMatcher = new ApiMethodMatcher();
-	private ServersideRenderingEngine renderingEngine = new ThymeleafRenderingEngine();
+    private final String rootPath = DEFALUT_ROOT_PATH;
+    private final Class<T> globalViewDataType;
+    private final Supplier<T> globalViewObjectSupplier;
+    private final AbstractLontanoService<?> lontano;
+    // move both to builder as not needed later?
+    private List<SospaPage<T, ?, ?>> pageList = new ArrayList<>();
+    private List<SospaCommonApi> apiList = new ArrayList<>();
+    private ApiMethodMatcher apiMethodMatcher = new ApiMethodMatcher();
+    private ServersideRenderingEngine renderingEngine = new ThymeleafRenderingEngine();
 
-	private Sospa(Class<T> globalViewDataType, Supplier<T> globalViewObjectSupplier) {
-		this.globalViewDataType = globalViewDataType;
-		this.globalViewObjectSupplier = globalViewObjectSupplier;
-		this.lontano  = new JavalinLontanoService();
-	}
-
-	public Sospa(Class<T> globalViewDataType) {
-		this(globalViewDataType, FunctionUtil.createDefaultConstructorSupplier(globalViewDataType));
-	}
-
-	public Sospa<T> addPage(SospaPage<T, ?, ?> page) {
-		Objects.requireNonNull(page, "page");
-		Preconditions.checkArgument(
-				this.pageList.stream().filter(p -> p.getPageName().equals(page.getPageName())).count() == 0,
-				"Page with name '" + page.getPageName().getNameAsString() + "' was already added.");
-		this.pageList.add(page);
-		return this;
-	}
-
-	public Sospa<T> addPages(Collection<SospaPage<T, ?, ?>> pages) {
-		for (SospaPage<T, ?, ?> vuelinPage : pages) {
-			this.addPage(vuelinPage);
-		}
-		return this;
-    }
-    
-    public void registerWithJavalin(Javalin javalin) {
-        this.lontano.registerWithJavalin(javalin);
+    public static boolean isRemoteMethod(Method method) {
+        return method.getReturnType() == ViewChange.class;
     }
 
-	private void registerEndpoints() {
-		for (SospaPage<T, ?, ?> page : this.pageList) {
-			this.registerPageEndpoints(page);
-		}
-	}
+    public Sospa(AbstractLontanoService<?> lontano, Class<T> globalViewDataType,
+            Supplier<T> globalViewObjectSupplier) {
+        this.globalViewDataType = requireNonNull(globalViewDataType, "globalViewDataType");
+        this.globalViewObjectSupplier =
+                requireNonNull(globalViewObjectSupplier, "globalViewObjectSupplier");
+        this.lontano = requireNonNull(lontano, "lontano");
+    }
 
-	private void registerPageEndpoints(SospaPage<T, ?, ?> page) {
-		this.registerPageLoadEndpoint(page);
-		this.registerPageMethodEndpoints(page);
-	}
+    public Sospa(AbstractLontanoService<?> lontano, Class<T> globalViewDataType) {
+        this(lontano, globalViewDataType,
+                FunctionUtil.createDefaultConstructorSupplier(globalViewDataType));
+    }
 
-	private void registerPageMethodEndpoints(SospaPage<T, ?, ?> page) {
-		// TODO Auto-generated method stub
+    public Sospa<T> addPage(SospaPage<T, ?, ?> page) {
+        Objects.requireNonNull(page, "page");
+        Preconditions.checkArgument(
+                this.pageList.stream().filter(p -> p.getPageName().equals(page.getPageName()))
+                        .count() == 0,
+                "Page with name '" + page.getPageName().getNameAsString() + "' was already added.");
+        this.pageList.add(page);
+        this.lontano.addInterface(page, Sospa::isRemoteMethod);
+        return this;
+    }
 
-	}
+    public Sospa<T> addPages(Collection<SospaPage<T, ?, ?>> pages) {
+        for (SospaPage<T, ?, ?> vuelinPage : pages) {
+            this.addPage(vuelinPage);
+        }
+        return this;
+    }
 
-	private void registerPageLoadEndpoint(SospaPage<T, ?, ?> page) {
-//		PageLoadEndpoint<T, ?, ?> endpoint = new PageLoadEndpoint<>(this.rootPath, page, this.vuelin);
-//		endpoint.registerWithJavalin(this.vuelin.javalin);
-	}
+    ServersideRenderingEngine renderingEngine() {
+        return this.renderingEngine;
+    }
 
-	ServersideRenderingEngine renderingEngine() {
-		return this.renderingEngine;
-	}
+    Class<T> globalViewDataType() {
+        return globalViewDataType;
+    }
 
-	Class<T> globalViewDataType() {
-		return globalViewDataType;
-	}
-
-	Supplier<T> globalViewObjectSupplier() {
-		return globalViewObjectSupplier;
-	}
+    Supplier<T> globalViewObjectSupplier() {
+        return globalViewObjectSupplier;
+    }
 }
