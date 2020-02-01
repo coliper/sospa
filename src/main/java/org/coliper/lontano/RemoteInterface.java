@@ -25,7 +25,7 @@ class RemoteInterface {
             if (Modifier.isStatic(method.getModifiers())) {
                 continue; // skip static methods
             }
-            if (methodFilter.test(method)) {
+            if (!methodFilter.test(method)) {
                 continue; // skip methods of class Object
             }
             map.put(new RemoteOperationName(method.getName()),
@@ -69,4 +69,10 @@ class RemoteInterface {
         }
         return parameters;
     }
+
+	@Override
+	public String toString() {
+		return "RemoteInterface [name=" + name + ", operationMap=" + operationMap + ", jsonDeserializer="
+				+ jsonDeserializer + "]";
+	}
 }

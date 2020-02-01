@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import com.google.common.base.Throwables;
 import com.google.common.primitives.Primitives;
@@ -43,4 +44,11 @@ class RemoteOperation {
     Class<?>[] parameterTypes() {
         return parameterTypes;
     }
+
+	@Override
+	public String toString() {
+		return "RemoteOperation [targetObject=" + targetObject + ", method=" + method + ", parameterTypes="
+				+ Arrays.toString(parameterTypes) + "]";
+	}
+    
 }

@@ -2,6 +2,7 @@ package org.coliper.sospa.sample.page;
 
 import org.coliper.sospa.PageSpecificData;
 import org.coliper.sospa.SospaPage;
+import org.coliper.sospa.ViewChange;
 import org.coliper.sospa.sample.GlobalData;
 
 public class WelcomePage extends SospaPage<GlobalData, WelcomePage.ClientSideData, Object> {
@@ -27,6 +28,12 @@ public class WelcomePage extends SospaPage<GlobalData, WelcomePage.ClientSideDat
         ClientSideData pageClientData = new ClientSideData();
         return new PageSpecificData<WelcomePage.ClientSideData>(pageClientData,
                 pageServersideRenderingData);
+    }
+
+    @Override
+    public ViewChange<GlobalData, WelcomePage.ClientSideData, Object> openFromClient(GlobalData globalClientData) {
+		return super.openFromClient(globalClientData);
+    	
     }
 
 }

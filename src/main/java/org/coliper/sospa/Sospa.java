@@ -51,6 +51,7 @@ public class Sospa<T> {
                 "Page with name '" + page.getPageName().getNameAsString() + "' was already added.");
         this.pageList.add(page);
         this.lontano.addInterface(page, Sospa::isRemoteMethod);
+        page.setSospa(this);
         return this;
     }
 

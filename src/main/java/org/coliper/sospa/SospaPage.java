@@ -16,9 +16,10 @@ public abstract class SospaPage<G, P, S> implements SospaApi {
     protected abstract PageSpecificData<P> createPageSpecificData(@Nullable G globalClientData,
             @Nullable S pageSetupData);
 
-    public ViewChange<G, P, S> open(@Nullable G globalClientData, @Nullable S pageSetupData) {
+    protected ViewChange<G, P, S> openFromClient(G globalClientData) {
         ViewChange<G, P, S> viewChange = new ViewChange<>();
-        PageSpecificData<P> pageData = this.createPageSpecificData(globalClientData, pageSetupData);
+        S pageSetupData = null;
+		PageSpecificData<P> pageData = this.createPageSpecificData(globalClientData, pageSetupData );
         String pageSource = this.sospa.renderingEngine().render(this.getTemplateName(),
                 pageData.getPageServersideRenderingData());
         viewChange.setPageHtmlSource(pageSource);

@@ -26,6 +26,7 @@ public abstract class AbstractLontanoService<T extends AbstractLontanoService<?>
     protected ReturnValueWrapper handleRequest(RemoteInterfaceName ifName,
             RemoteOperationName opName, String requestBody) throws Exception {
         final RemoteInterface intf = this.interfaceMap.get(requireNonNull(ifName, "ifName"));
+      System.out.println("******** interfaces: " + this.interfaceMap);
         Preconditions.checkState(intf != null, "unknown interface name %s", ifName);
         Object returnValueBeforeInterception =
                 intf.callOperation(opName, JsonUtil.splitJsonArray(requestBody));
@@ -65,7 +66,7 @@ public abstract class AbstractLontanoService<T extends AbstractLontanoService<?>
     }
 
     private RemoteInterfaceName createInterfaceNameFromObjectClass(Object object) {
-        return new RemoteInterfaceName(object.getClass().getName());
+        return new RemoteInterfaceName(object.getClass().getSimpleName());
     }
 
     public T returnValueInterceptor(Function<Object, Object> returnValueInterceptor) {
