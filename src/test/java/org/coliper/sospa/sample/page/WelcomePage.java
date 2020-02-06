@@ -8,6 +8,8 @@ import org.coliper.sospa.sample.GlobalData;
 public class WelcomePage extends SospaPage<GlobalData, WelcomePage.ClientSideData, Object> {
 
     public static class ClientSideData {
+        private boolean zipCodeValid = false;
+
         // required to avoid serialization error
         public String getDummy() {
             return null;
@@ -31,9 +33,10 @@ public class WelcomePage extends SospaPage<GlobalData, WelcomePage.ClientSideDat
     }
 
     @Override
-    public ViewChange<GlobalData, WelcomePage.ClientSideData, Object> openFromClient(GlobalData globalClientData) {
-		return super.openFromClient(globalClientData);
-    	
+    public ViewChange<GlobalData, WelcomePage.ClientSideData, Object> openFromClient(
+            GlobalData globalClientData) {
+        return super.openFromClient(globalClientData);
+
     }
 
 }

@@ -13,7 +13,11 @@ lontano.call = function (interface, operation, params) {
   console.log('lontano.call: interface=' + interface + ' operation=' + operation + ' params=' + JSON.stringify(params));
   var url = interface + '/' + operation;
   var body = JSON.stringify(params);
-  return lontano.axios.post(url, body);
+  return lontano.axios.post(url, body)
+    .then(function(result) {
+      console.log(`calling url ${url} returned ${JSON.stringify(result)}`)
+      return result.data;
+    });
 }
 
 lontano.api = {};
@@ -23,7 +27,7 @@ lontano.api.WelcomePage.openFromClient = function (p1) {
 };
 lontano.api.ProductPage = {};
 lontano.api.ProductPage.openFromClient = function (p1) {
-  return lontano.call('WelcomePage', 'openFromClient', [p1]);
+  return lontano.call('ProductPage', 'openFromClient', [p1]);
 };
 
 
@@ -70,15 +74,41 @@ sospa.pages = {};
 sospa.pages.WelcomePage = {
   name: 'WelcomePage',
   template: '<p>Loading WelcomePage ...</p>',
-  data: {
-    p: {},
-    g: sospa.globalData
+  data: function() { 
+    return {
+      p: {},
+      g: sospa.globalData
+    };
   },
   methods: {}
 }
 
 sospa.pages.WelcomePage.methods.openFromClient = function (p1) {
   return sospa.handleViewChange(sospa.pages.WelcomePage, lontano.api.WelcomePage.openFromClient(p1));
+}
+
+sospa.pages.WelcomePage.methods.s$_gotoPage = function (pageName) {
+  sospa.router.push({name: pageName});
+}
+
+sospa.pages.ProductPage = {
+  name: 'WelcomePage',
+  template: '<p>Loading ProductPage ...</p>',
+  data: function() { 
+    return {
+      p: {},
+      g: sospa.globalData
+    };
+  },
+  methods: {}
+}
+
+sospa.pages.ProductPage.methods.openFromClient = function (p1) {
+  return sospa.handleViewChange(sospa.pages.ProductPage, lontano.api.ProductPage.openFromClient(p1));
+}
+
+sospa.pages.ProductPage.methods.s$_gotoPage = function (pageName) {
+  sospa.router.push({name: pageName});
 }
 
 sospa.vue = {};
@@ -89,9 +119,9 @@ sospa.vue.components = {};
 sospa.vue.components.WelcomePage = function (resolve, reject) {
   sospa.loadPage(sospa.pages.WelcomePage, resolve, reject);
 }
-
-
-sospa.vue.components.ProductPage = { template: '<h4>ProductPage</h4>' }
+sospa.vue.components.ProductPage = function (resolve, reject) {
+  sospa.loadPage(sospa.pages.ProductPage, resolve, reject);
+}
 
 sospa.vue.components.SummaryPage = { template: '<h4>SummaryPage</h4>' }
 
@@ -103,11 +133,11 @@ sospa.vue.components.ErrorPage = { template: '<h4>Oops, something went wrong!</h
 // `Vue.extend()`, or just a component options object.
 // We'll talk about nested routes later.
 sospa.vue.routes = [
-  { path: '/', redirect: '/welcome' },
-  { path: '/welcome', component: sospa.vue.components.WelcomePage },
-  { path: '/product', component: sospa.vue.components.ProductPage },
-  { path: '/summary', component: sospa.vue.components.SummaryPage },
-  { path: '/error', component: sospa.vue.components.ErrorPage }
+  { path: '/', redirect: '/WelcomePage' },
+  { path: '/WelcomePage', component: sospa.vue.components.WelcomePage },
+  { path: '/ProductPage', component: sospa.vue.components.ProductPage },
+  { path: '/SummaryPage', component: sospa.vue.components.SummaryPage },
+  { path: '/ErrorPage', component: sospa.vue.components.ErrorPage }
 ]
 
 // 3. Create the router instance and pass the `routes` option

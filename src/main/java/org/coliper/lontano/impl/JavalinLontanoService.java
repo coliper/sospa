@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNull;
 import org.coliper.lontano.AbstractLontanoService;
 import org.coliper.lontano.RemoteInterfaceName;
 import org.coliper.lontano.RemoteOperationName;
-import org.coliper.lontano.ReturnValueWrapper;
 
 import com.google.common.base.Preconditions;
 
@@ -54,7 +53,7 @@ public class JavalinLontanoService extends AbstractLontanoService<JavalinLontano
 
     public void handleOperationCall(Context ctx) throws Exception {
         requireNonNull(ctx, "ctx");
-        ReturnValueWrapper result = this.handleRequest(getInterfaceNameFromContext(ctx),
+        Object result = this.handleRequest(getInterfaceNameFromContext(ctx),
                 getOperationNameFromContext(ctx), ctx.body());
         ctx.json(result);
     }
