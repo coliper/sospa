@@ -88,11 +88,11 @@ sospa.pages.WelcomePage.methods.openFromClient = function (p1) {
 }
 
 sospa.pages.WelcomePage.methods.s$_gotoPage = function (pageName) {
-  sospa.router.push({name: pageName});
+  sospa.vue.router.push({name: pageName});
 }
 
 sospa.pages.ProductPage = {
-  name: 'WelcomePage',
+  name: 'ProductPage',
   template: '<p>Loading ProductPage ...</p>',
   data: function() { 
     return {
@@ -108,7 +108,7 @@ sospa.pages.ProductPage.methods.openFromClient = function (p1) {
 }
 
 sospa.pages.ProductPage.methods.s$_gotoPage = function (pageName) {
-  sospa.router.push({name: pageName});
+  sospa.vue.router.push({name: pageName});
 }
 
 sospa.vue = {};
@@ -134,10 +134,10 @@ sospa.vue.components.ErrorPage = { template: '<h4>Oops, something went wrong!</h
 // We'll talk about nested routes later.
 sospa.vue.routes = [
   { path: '/', redirect: '/WelcomePage' },
-  { path: '/WelcomePage', component: sospa.vue.components.WelcomePage },
-  { path: '/ProductPage', component: sospa.vue.components.ProductPage },
-  { path: '/SummaryPage', component: sospa.vue.components.SummaryPage },
-  { path: '/ErrorPage', component: sospa.vue.components.ErrorPage }
+  { name: 'WelcomePage', path: '/WelcomePage', component: sospa.vue.components.WelcomePage },
+  { name: 'ProductPage', path: '/ProductPage', component: sospa.vue.components.ProductPage },
+  { name: 'SummaryPage', path: '/SummaryPage', component: sospa.vue.components.SummaryPage },
+  { name: 'ErrorPage', path: '/ErrorPage', component: sospa.vue.components.ErrorPage }
 ]
 
 // 3. Create the router instance and pass the `routes` option
