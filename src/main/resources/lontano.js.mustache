@@ -1,0 +1,34 @@
+console.log('*** SOSPA ***');
+
+// LONTANO BEGIN
+
+var lontano = {
+}
+
+lontano.axios = axios.create({
+  baseURL: '/'
+});
+
+lontano.call = function (interface, operation, params) {
+  console.log('lontano.call: interface=' + interface + ' operation=' + operation + ' params=' + JSON.stringify(params));
+  var url = interface + '/' + operation;
+  var body = JSON.stringify(params);
+  return lontano.axios.post(url, body)
+    .then(function(result) {
+      console.log(`calling url ${url} returned ${JSON.stringify(result)}`)
+      return result.data;
+    });
+}
+
+lontano.api = {};
+lontano.api.WelcomePage = {};
+lontano.api.WelcomePage.openFromClient = function (p1) {
+  return lontano.call('WelcomePage', 'openFromClient', [p1]);
+};
+lontano.api.ProductPage = {};
+lontano.api.ProductPage.openFromClient = function (p1) {
+  return lontano.call('ProductPage', 'openFromClient', [p1]);
+};
+
+
+// LONTANO END

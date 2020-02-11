@@ -2,11 +2,14 @@ package org.coliper.lontano;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
 import com.google.common.base.Preconditions;
 
 public abstract class AbstractLontanoService<T extends AbstractLontanoService<?>> {
@@ -17,6 +20,9 @@ public abstract class AbstractLontanoService<T extends AbstractLontanoService<?>
         }
     };
 
+    private static final String JS_TEMPLATE_NAME = "lontano.js.mustache";
+
+    private final Mustache mustache = new DefaultMustacheFactory().compile(JS_TEMPLATE_NAME);
     private Map<RemoteInterfaceName, RemoteInterface> interfaceMap = new HashMap<>();
 
     protected abstract Object deserializeFromJson(String json, Class<?> expectedType);
@@ -27,6 +33,13 @@ public abstract class AbstractLontanoService<T extends AbstractLontanoService<?>
         System.out.println("******** interfaces: " + this.interfaceMap);
         Preconditions.checkState(intf != null, "unknown interface name %s", ifName);
         return intf.callOperation(opName, JsonUtil.splitJsonArray(requestBody));
+    }
+
+    protected String createJsSource() {
+        StringWriter writer = new StringWriter(2000);
+        Map<String, Object> meta = new HashMap<String, Object>();
+        this.mustache.execute(writer, meta);
+        return writer.toString();
     }
 
     @SuppressWarnings("unchecked")

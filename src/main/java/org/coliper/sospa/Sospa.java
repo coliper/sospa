@@ -11,11 +11,15 @@ import java.util.function.Supplier;
 
 import org.coliper.lontano.AbstractLontanoService;
 
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
 import com.google.common.base.Preconditions;
 
 public class Sospa<T> {
     private static final String DEFALUT_ROOT_PATH = "";
+    private static final String JS_TEMPLATE_NAME = "sospa.js.mustache";
 
+    private final Mustache mustache = new DefaultMustacheFactory().compile(JS_TEMPLATE_NAME);
     private final String rootPath = DEFALUT_ROOT_PATH;
     private final Class<T> globalViewDataType;
     private final Supplier<T> globalViewObjectSupplier;

@@ -18,7 +18,7 @@ public class JavalinLontanoService extends AbstractLontanoService<JavalinLontano
     private static final String PATH_PARAMETER_MARKER = ":";
     private static final String PATH_PARAMETER_INTERFACE = "interface";
     private static final String PATH_PARAMETER_OPERATION = "operation";
-    private static final String DEFAULT_WRAPPER_PATH = "client.js";
+    private static final String DEFAULT_WRAPPER_PATH = "lontano.js";
     private static final String JAVASCRIPT_CONTENT_TYPE = "text/javascript; charset=UTF-8";
 
     private String wrapperPath = DEFAULT_WRAPPER_PATH;
@@ -60,7 +60,7 @@ public class JavalinLontanoService extends AbstractLontanoService<JavalinLontano
 
     public void handleWrapperCall(Context ctx) throws Exception {
         requireNonNull(ctx, "ctx");
-        ctx.result("bla bla");
+        ctx.result(this.createJsSource());
         ctx.contentType(JAVASCRIPT_CONTENT_TYPE);
     }
 
