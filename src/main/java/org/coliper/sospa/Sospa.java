@@ -2,6 +2,7 @@ package org.coliper.sospa;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +11,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.coliper.lontano.AbstractLontanoService;
+import org.coliper.lontano.LontanoMetaInfo;
 
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
@@ -30,7 +32,7 @@ public class Sospa<T> {
     private ApiMethodMatcher apiMethodMatcher = new ApiMethodMatcher();
     private ServersideRenderingEngine renderingEngine = new ThymeleafRenderingEngine();
 
-    public static boolean isRemoteMethod(Method method) {
+    private static boolean isRemoteMethod(Method method) {
         return method.getReturnType() == ViewChange.class;
     }
 
@@ -40,6 +42,13 @@ public class Sospa<T> {
         this.globalViewObjectSupplier =
                 requireNonNull(globalViewObjectSupplier, "globalViewObjectSupplier");
         this.lontano = requireNonNull(lontano, "lontano");
+        this.lontano.addJsBlockCreator(this::createJsBlock);
+    }
+
+    private String createJsBlock(LontanoMetaInfo lontanoMeta) {
+        StringWriter writer = new StringWriter(2000);
+        this.mustache.execute(writer, lontanoMeta);
+        return writer.toString();
     }
 
     public Sospa(AbstractLontanoService<?> lontano, Class<T> globalViewDataType) {

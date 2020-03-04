@@ -7,10 +7,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 class RemoteInterface {
     private final RemoteInterfaceName name;
@@ -28,8 +30,8 @@ class RemoteInterface {
             if (!methodFilter.test(method)) {
                 continue; // skip methods of class Object
             }
-            map.put(new RemoteOperationName(method.getName()),
-                    new RemoteOperation(targetObject, method));
+            final RemoteOperationName opName = new RemoteOperationName(method.getName());
+            map.put(opName, new RemoteOperation(opName, targetObject, method));
         }
         return Collections.unmodifiableMap(map);
     }
@@ -58,6 +60,27 @@ class RemoteInterface {
         return operation.call(parameters);
     }
 
+    InterfaceMetaInfo getMetaInfo() {
+        return new InterfaceMetaInfo() {
+
+            @Override
+            public RemoteInterfaceName getName() {
+                return RemoteInterface.this.name;
+            }
+
+            @Override
+            public List<OperationMetaInfo> getOperations() {
+                return RemoteInterface.this.operationMap.values().stream()
+                        .map(RemoteOperation::getMetaInfo).collect(Collectors.toList());
+            }
+
+            @Override
+            public String getInterfaceName() {
+                return RemoteInterface.this.name.valueAsString();
+            }
+        };
+    }
+
     private Object[] parseJsonParameters(String[] jsonParameters,
             Class<?>[] expectedParameterTypes) {
         Object[] parameters = new Object[jsonParameters.length];
@@ -70,9 +93,9 @@ class RemoteInterface {
         return parameters;
     }
 
-	@Override
-	public String toString() {
-		return "RemoteInterface [name=" + name + ", operationMap=" + operationMap + ", jsonDeserializer="
-				+ jsonDeserializer + "]";
-	}
+    @Override
+    public String toString() {
+        return "RemoteInterface [name=" + name + ", operationMap=" + operationMap
+                + ", jsonDeserializer=" + jsonDeserializer + "]";
+    }
 }

@@ -1,7 +1,5 @@
 console.log('*** SOSPA ***');
 
-// LONTANO BEGIN
-
 var lontano = {
 }
 
@@ -20,15 +18,15 @@ lontano.call = function (interface, operation, params) {
     });
 }
 
+
 lontano.api = {};
-lontano.api.WelcomePage = {};
-lontano.api.WelcomePage.openFromClient = function (p1) {
-  return lontano.call('WelcomePage', 'openFromClient', [p1]);
-};
-lontano.api.ProductPage = {};
-lontano.api.ProductPage.openFromClient = function (p1) {
-  return lontano.call('ProductPage', 'openFromClient', [p1]);
-};
 
+{{#interfaces}}
+lontano.api.{{interfaceName}} = {};
+{{#operations}}
+lontano.api.{{interfaceName}}.{{operationName}} = function ({{commaSeparatedParams}}) {
+  return lontano.call('{{interfaceName}}', '{{operationName}}', [{{commaSeparatedParams}}]);
+};
+{{/operations}}
 
-// LONTANO END
+{{/interfaces}}

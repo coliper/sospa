@@ -10,6 +10,7 @@ import com.google.common.base.Throwables;
 import com.google.common.primitives.Primitives;
 
 class RemoteOperation {
+    private final RemoteOperationName name;
     private final Object targetObject;
     private final Method method;
     private final Class<?>[] parameterTypes;
@@ -24,7 +25,8 @@ class RemoteOperation {
         return types;
     }
 
-    RemoteOperation(Object targetObject, Method method) {
+    RemoteOperation(RemoteOperationName name, Object targetObject, Method method) {
+        this.name = name;
         this.targetObject = targetObject;
         this.method = method;
         this.parameterTypes = retrieveParameterTypes(method);
@@ -45,10 +47,42 @@ class RemoteOperation {
         return parameterTypes;
     }
 
-	@Override
-	public String toString() {
-		return "RemoteOperation [targetObject=" + targetObject + ", method=" + method + ", parameterTypes="
-				+ Arrays.toString(parameterTypes) + "]";
-	}
-    
+    RemoteOperationName name() {
+        return this.name;
+    }
+
+    OperationMetaInfo getMetaInfo() {
+        return new OperationMetaInfo() {
+
+            @Override
+            public RemoteOperationName getName() {
+                return RemoteOperation.this.name;
+            }
+
+            @Override
+            public String getCommaSeparatedParams() {
+                StringBuilder str = new StringBuilder();
+                for (int i = 0; i < RemoteOperation.this.method.getParameterCount(); i++) {
+                    if (i > 0) {
+                        str.append(", ");
+                    }
+                    str.append("p");
+                    str.append(i + 1);
+                }
+                return str.toString();
+            }
+
+            @Override
+            public String getOperationName() {
+                return RemoteOperation.this.name.valueAsString();
+            }
+        };
+    }
+
+    @Override
+    public String toString() {
+        return "RemoteOperation [targetObject=" + targetObject + ", method=" + method
+                + ", parameterTypes=" + Arrays.toString(parameterTypes) + "]";
+    }
+
 }
