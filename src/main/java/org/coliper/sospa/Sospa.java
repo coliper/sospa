@@ -11,11 +11,13 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.coliper.lontano.AbstractLontanoService;
+import org.coliper.lontano.InterfaceMetaInfo;
 import org.coliper.lontano.LontanoMetaInfo;
 
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 public class Sospa<T> {
     private static final String DEFALUT_ROOT_PATH = "";
@@ -47,8 +49,33 @@ public class Sospa<T> {
 
     private String createJsBlock(LontanoMetaInfo lontanoMeta) {
         StringWriter writer = new StringWriter(2000);
-        this.mustache.execute(writer, lontanoMeta);
+        this.mustache.execute(writer, this.createJsCodeMetaInfo(lontanoMeta));
         return writer.toString();
+    }
+
+    private JsCodeMetaInfo createJsCodeMetaInfo(final LontanoMetaInfo lontanoMeta) {
+        return new JsCodeMetaInfo() {
+
+            @Override
+            public List<PageMetaInfo> getPages() {
+                return Lists.transform(Sospa.this.pageList, this::createPageMetaInfo);
+            }
+
+            private PageMetaInfo createPageMetaInfo(SospaPage<?, ?, ?> pg) {
+                InterfaceMetaInfo interfaceMeta = lontanoMeta
+                        .getInterfaceForName(pg.getLontanoInterfaceName())
+                        .orElseThrow(() -> new IllegalStateException(
+                                "cannot find Lontano interface " + pg.getLontanoInterfaceName()));
+                return new PageMetaInfo(pg, interfaceMeta);
+            }
+
+            @Override
+            public List<ApiMetaInfo> getApis() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+        };
     }
 
     public Sospa(AbstractLontanoService<?> lontano, Class<T> globalViewDataType) {
@@ -63,7 +90,7 @@ public class Sospa<T> {
                         .count() == 0,
                 "Page with name '" + page.getPageName().getNameAsString() + "' was already added.");
         this.pageList.add(page);
-        this.lontano.addInterface(page, Sospa::isRemoteMethod);
+        this.lontano.addInterface(page.getLontanoInterfaceName(), page, Sospa::isRemoteMethod);
         page.setSospa(this);
         return this;
     }

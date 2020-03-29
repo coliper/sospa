@@ -12,23 +12,12 @@
  * the License.
  */
 
-package org.coliper.lontano;
-
-import java.util.List;
-import java.util.Optional;
+package org.coliper.sospa;
 
 /**
  * @author alex@coliper.org
  *
  */
-public interface LontanoMetaInfo {
-
-    List<InterfaceMetaInfo> getInterfaces();
-
-    default Optional<InterfaceMetaInfo> getInterfaceForName(
-            final RemoteInterfaceName interfaceName) {
-        return getInterfaces().stream()
-                .filter(((InterfaceMetaInfo m) -> m.getName().equals(interfaceName))).findAny();
-    }
+public interface ApiMetaInfo {
 
 }

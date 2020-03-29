@@ -3,6 +3,8 @@ var sospa = {};
 
 sospa.globalData = {};
 
+// Called by sospa.handleViewChange() and changes the component and eventually the current page as
+// defined from the data in the given viewChange parameter. 
 sospa.handleViewChangeSync = function (page, viewChange) {
   console.log('sospa.handleViewChangeSync: page=' + JSON.stringify(page) + ' viewChange=' + JSON.stringify(viewChange));
   if (viewChange.pageHtmlSource) {
@@ -16,6 +18,8 @@ sospa.handleViewChangeSync = function (page, viewChange) {
   }
 }
 
+// Common execution method for each remote call. Each remote call returns a ViewChange object
+// that is interpreted by this method.
 sospa.handleViewChange = function (page, promise) {
   console.log('sospa.handleViewChange: page=' + JSON.stringify(page));
   return promise.then(function (viewChange) {
@@ -25,6 +29,8 @@ sospa.handleViewChange = function (page, promise) {
   });
 }
 
+// Called exclusively from component initialization method when first loading the component.
+// Should not be called from any other function.
 sospa.loadPage = function (page, resolve, reject) {
   console.log('sospa.loadPage: page=' + JSON.stringify(page));
   page.methods.openFromClient(page.data.g, null).then(function (response) {
