@@ -43,9 +43,11 @@ sospa.loadPage = function (page, resolve, reject) {
 
 sospa.pages = {};
 
-sospa.pages.WelcomePage = {
-  name: 'WelcomePage',
-  template: '<p>Loading WelcomePage ...</p>',
+{{#pages}}
+
+sospa.pages.{{pageName}} = {
+  name: '{{pageName}}',
+  template: '<p>Loading {{pageName}} ...</p>',
   data: function() { 
     return {
       p: {},
@@ -55,33 +57,19 @@ sospa.pages.WelcomePage = {
   methods: {}
 }
 
-sospa.pages.WelcomePage.methods.openFromClient = function (p1) {
-  return sospa.handleViewChange(sospa.pages.WelcomePage, lontano.api.WelcomePage.openFromClient(p1));
+{{#operations}}
+sospa.pages.{{pageName}}.methods.{{operationName}} = function ({{commaSeparatedParams}}) {
+  return sospa.handleViewChange(sospa.pages.{{pageName}}, 
+    lontano.api.{{lontanoInterfaceName}}.{{operationName}}({{commaSeparatedParams}}));
 }
 
-sospa.pages.WelcomePage.methods.s$_gotoPage = function (pageName) {
+{{/operations}}
+sospa.pages.{{pageName}}.methods.s$_gotoPage = function (pageName) {
   sospa.vue.router.push({name: pageName});
 }
 
-sospa.pages.ProductPage = {
-  name: 'ProductPage',
-  template: '<p>Loading ProductPage ...</p>',
-  data: function() { 
-    return {
-      p: {},
-      g: sospa.globalData
-    };
-  },
-  methods: {}
-}
+{{/pages}}
 
-sospa.pages.ProductPage.methods.openFromClient = function (p1) {
-  return sospa.handleViewChange(sospa.pages.ProductPage, lontano.api.ProductPage.openFromClient(p1));
-}
-
-sospa.pages.ProductPage.methods.s$_gotoPage = function (pageName) {
-  sospa.vue.router.push({name: pageName});
-}
 
 sospa.vue = {};
 

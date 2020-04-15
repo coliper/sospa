@@ -39,4 +39,8 @@ public class PageMetaInfo {
     public List<OperationMetaInfo> getOperations() {
         return this.interfaceMetaInfo.getOperations();
     }
+
+    public String lontanoInterfaceName() {
+        return this.interfaceMetaInfo.getInterfaceName();
+    }
 }

@@ -48,11 +48,12 @@ public abstract class AbstractLontanoService<T extends AbstractLontanoService<?>
     }
 
     protected String createJsSource() {
+        final LontanoMetaInfo metaInfo = this.getMetaInfo();
         final Mustache mustache =
                 new DefaultMustacheFactory().compile(this.createJsTemplate(), JS_TEMPLATE_NAME);
         StringWriter writer = new StringWriter(2000);
-        mustache.execute(writer, this.getMetaInfo());
-        return writer.toString();
+        mustache.execute(writer, metaInfo);
+        return writer.toString() + this.addCustomJs(metaInfo);
     }
 
     private Reader createJsTemplate() {
@@ -62,11 +63,16 @@ public abstract class AbstractLontanoService<T extends AbstractLontanoService<?>
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return new StringReader(template);
+    }
+
+    private String addCustomJs(LontanoMetaInfo metaInfo) {
+        String customJs = "";
         List<Function<LontanoMetaInfo, String>> x = this.javaScriptBlockCreators;
         for (Function<LontanoMetaInfo, String> function : x) {
-            template += function.apply(null);
+            customJs += function.apply(metaInfo);
         }
-        return new StringReader(template);
+        return customJs;
     }
 
     @SuppressWarnings("unchecked")
